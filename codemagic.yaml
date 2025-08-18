@@ -3,10 +3,11 @@ workflows:
     name: Android Build
     environment:
       vars:
-        # Codemagic already has SDK installed
         ANDROID_HOME: /usr/local/lib/android/sdk
     scripts:
+      - name: Clean project
+        script: ./gradlew clean
       - name: Build Debug APK
-        script: ./gradlew clean assembleDebug
+        script: ./gradlew assembleDebug
     artifacts:
       - app/build/outputs/**/*.apk
