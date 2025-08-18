@@ -1,25 +1,12 @@
 workflows:
   android-build:
-    name: Build Android APK
+    name: Android Build
     environment:
       vars:
-        ANDROID_HOME: $HOME/android-sdk
+        # Codemagic already has SDK installed
+        ANDROID_HOME: /usr/local/lib/android/sdk
     scripts:
-      - name: Install Android SDK
-        script: |
-          sudo apt-get update
-          sudo apt-get install -y wget unzip
-          mkdir -p $ANDROID_HOME
-          cd $ANDROID_HOME
-          wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdline-tools.zip
-          mkdir -p cmdline-tools/latest
-          unzip cmdline-tools.zip -d cmdline-tools/latest
-          export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools
-          sdkmanager --sdk_root=$ANDROID_HOME "platform-tools" "build-tools;33.0.1" "platforms;33"
-          yes | sdkmanager --licenses
-      - name: Build APK
-        script: |
-          cd $CM_WORKING_DIRECTORY
-          ./gradlew clean assembleDebug
+      - name: Build Debug APK
+        script: ./gradlew clean assembleDebug
     artifacts:
       - app/build/outputs/**/*.apk
