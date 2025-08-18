@@ -1,1 +1,5 @@
-<resourcse><string name="app_name">VoXNet</string><string name="footer_credit">Created by Aditya Sarode</string></resources>
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">VoXNet</string>
+    <string name="footer_credit">Created by Aditya Sarode</string>
+</resources>
