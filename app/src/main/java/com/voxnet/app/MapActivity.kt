@@ -13,8 +13,12 @@ import android.os.IBinder
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import org.osmdroid.config.Configuration
+import org.osmdroid.tileprovider.MapTileProviderArray
+import org.osmdroid.tileprovider.modules.MBTilesFileArchive
+import org.osmdroid.tileprovider.modules.MapTileFileArchiveProvider
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.tileprovider.tilesource.XYTileSource
+import org.osmdroid.tileprovider.util.SimpleRegisterReceiver
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
@@ -64,57 +68,71 @@ class MapActivity : AppCompatActivity(), SensorEventListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Configure osmdroid
         Configuration.getInstance().userAgentValue = packageName
+
+        // Create map view
         map = MapView(this)
         setContentView(map)
 
+        // Setup tiles (offline MBTiles if present, otherwise cached tiles)
         setupOfflineMap()
 
+        // Path styling
         path.outlinePaint.strokeWidth = 6f
-        path.outlinePaint.color = 0xFF0000FF.toInt() // Blue path
+        path.outlinePaint.color = 0xFF0000FF.toInt() // Blue
 
+        // Sensors for heading
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
     }
 
     private fun setupOfflineMap() {
         try {
+            // Avoid any network fetches
             map.setUseDataConnection(false)
 
             val mbtilesFile = File("/sdcard/osmdroid/area.mbtiles")
             if (mbtilesFile.exists()) {
-                val archive = org.osmdroid.tileprovider.modules.MBTilesFileArchive.getDatabaseFileArchive(mbtilesFile)
-                val provider = org.osmdroid.tileprovider.modules.MapTileFileArchiveProvider(
-                    org.osmdroid.tileprovider.util.SimpleRegisterReceiver(this),
-                    arrayOf(archive)
-                )
-
-                val tileSource = XYTileSource(
-                    "OfflineTiles",
-                    0,
-                    19,
+                // 1) Define an offline tile source (adjust min/max zoom to your mbtiles)
+                val offlineSource = XYTileSource(
+                    "mbtiles",   // arbitrary name
+                    0,           // min zoom
+                    19,          // max zoom (adjust if your MBTiles uses different range)
                     256,
                     ".png",
-                    arrayOf()
+                    null
                 )
 
-                val tileProvider = org.osmdroid.tileprovider.MapTileProviderArray(
-                    tileSource,
+                // 2) Create archive provider bound to that tile source
+                val archive = MBTilesFileArchive.getDatabaseFileArchive(mbtilesFile)
+                val archiveProvider = MapTileFileArchiveProvider(
+                    SimpleRegisterReceiver(this),
+                    offlineSource,                 // ITileSource
+                    arrayOf(archive)               // archives to read
+                )
+
+                // 3) Build a provider array for the map
+                val providerArray = MapTileProviderArray(
+                    offlineSource,                 // ITileSource
                     null,
-                    arrayOf(provider)
+                    arrayOf(archiveProvider)
                 )
 
-                map.setTileProvider(tileProvider)
-                Toast.makeText(this, "Offline map tiles loaded from MBTiles", Toast.LENGTH_SHORT).show()
+                map.setTileProvider(providerArray)
+                map.setTileSource(offlineSource)
+                Toast.makeText(this, "Offline MBTiles loaded", Toast.LENGTH_SHORT).show()
             } else {
+                // Fallback: cached tiles only (no internet)
                 map.setTileSource(TileSourceFactory.MAPNIK)
-                Toast.makeText(this, "Using cached tiles only - Place area.mbtiles in /sdcard/osmdroid/", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Place area.mbtiles in /sdcard/osmdroid/", Toast.LENGTH_LONG).show()
             }
         } catch (e: Exception) {
             map.setTileSource(TileSourceFactory.MAPNIK)
-            Toast.makeText(this, "Map initialization error: ${e.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Map init error: ${e.message}", Toast.LENGTH_SHORT).show()
         }
 
         map.setMultiTouchControls(true)
+        // Default view (change to your operation area if desired)
         map.controller.setZoom(10.0)
         map.controller.setCenter(GeoPoint(28.6139, 77.2090))
     }
