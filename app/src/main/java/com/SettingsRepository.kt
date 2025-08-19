@@ -10,16 +10,11 @@ class SettingsRepository(context: Context) {
 
     fun getSettings(): VoXNetSettings {
         val json = prefs.getString("settings", null)
-        return if (json != null) {
-            gson.fromJson(json, VoXNetSettings::class.java)
-        } else {
-            VoXNetSettings()
-        }
+        return if (json != null) gson.fromJson(json, VoXNetSettings::class.java) else VoXNetSettings()
     }
 
     fun saveSettings(settings: VoXNetSettings) {
-        val json = gson.toJson(settings)
-        prefs.edit().putString("settings", json).apply()
+        prefs.edit().putString("settings", gson.toJson(settings)).apply()
     }
 
     fun testConnection(settings: VoXNetSettings, callback: (Boolean, String) -> Unit) {

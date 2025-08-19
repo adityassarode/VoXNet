@@ -31,7 +31,6 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginBottom="16dp">
-
         <Button
             android:id="@+id/btnConnect"
             android:layout_width="0dp"
@@ -39,7 +38,6 @@
             android:layout_weight="1"
             android:text="Connect"
             android:layout_marginEnd="8dp" />
-
         <Button
             android:id="@+id/btnSettings"
             android:layout_width="0dp"
@@ -47,7 +45,6 @@
             android:layout_weight="1"
             android:text="Settings"
             android:layout_marginStart="8dp" />
-
     </LinearLayout>
 
     <Button
@@ -70,7 +67,6 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginBottom="16dp">
-
         <Button
             android:id="@+id/btnCall"
             android:layout_width="0dp"
@@ -79,7 +75,6 @@
             android:text="Call"
             android:enabled="false"
             android:layout_marginEnd="8dp" />
-
         <Button
             android:id="@+id/btnEnd"
             android:layout_width="0dp"
@@ -88,7 +83,6 @@
             android:text="End"
             android:enabled="false"
             android:layout_marginStart="8dp" />
-
     </LinearLayout>
 
     <EditText
@@ -105,7 +99,6 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginBottom="16dp">
-
         <Button
             android:id="@+id/btnSendSms"
             android:layout_width="0dp"
@@ -114,7 +107,6 @@
             android:text="Send SMS"
             android:enabled="false"
             android:layout_marginEnd="8dp" />
-
         <Button
             android:id="@+id/btnSos"
             android:layout_width="0dp"
@@ -125,7 +117,6 @@
             android:background="#FF5722"
             android:textColor="@android:color/white"
             android:layout_marginStart="8dp" />
-
     </LinearLayout>
 
     <Button
@@ -135,13 +126,25 @@
         android:text="Speaker"
         android:enabled="false" />
 
-    <!-- Spacer to push footer to bottom -->
+    <Button
+        android:id="@+id/btnMap"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Open Map"
+        android:layout_marginTop="12dp" />
+
+    <Button
+        android:id="@+id/btnTimeline"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Show Process Details"
+        android:layout_marginTop="8dp" />
+
     <Space
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <!-- Footer -->
     <TextView
         android:id="@+id/txtFooter"
         android:layout_width="match_parent"
@@ -151,5 +154,4 @@
         android:textSize="12sp"
         android:textColor="#777777"
         android:layout_marginTop="8dp" />
-
 </LinearLayout>

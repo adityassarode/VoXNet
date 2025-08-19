@@ -30,7 +30,6 @@ data class AudioFrame(
         if (!data.contentEquals(other.data)) return false
         return true
     }
-
     override fun hashCode(): Int {
         var result = seq
         result = 31 * result + timestamp.hashCode()
@@ -39,9 +38,7 @@ data class AudioFrame(
     }
 }
 
-enum class CallState {
-    DISCONNECTED, CONNECTING, DIALING, RINGING, CONNECTED, ENDED, ERROR
-}
+enum class CallState { DISCONNECTED, CONNECTING, DIALING, RINGING, CONNECTED, ENDED, ERROR }
 
 object MessageTypes {
     const val CALL_REQ = "CALL_REQ"
@@ -60,3 +57,19 @@ object StatusStates {
     const val SMS_FAIL = "SMS_FAIL"
     const val ERROR = "ERROR"
 }
+
+data class GpsFix(
+    val lat: Double,
+    val lon: Double,
+    val alt: Double? = null,
+    val acc: Double? = null,
+    val spd: Double? = null,
+    val head: Double? = null,
+    val ts: Long? = null
+)
+
+data class TimelineEvent(
+    val flow: String,   // CONNECT, CALL, SMS, SOS
+    val stage: String,  // WS_OPEN, RINGING, CONNECTED, ENDED, SMS_SENT, etc.
+    val ts: Long = System.currentTimeMillis()
+)
