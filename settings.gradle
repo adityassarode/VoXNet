@@ -13,4 +13,4 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "VoXNet"
-include ':app'
+iinclude ':app'
