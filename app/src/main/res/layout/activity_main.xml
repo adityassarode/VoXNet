@@ -1,157 +1,169 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
-
-    <TextView
-        android:id="@+id/txtTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="VoXNet Communication"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:layout_marginBottom="16dp" />
-
-    <TextView
-        android:id="@+id/txtStatus"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Disconnected"
-        android:textSize="16sp"
-        android:gravity="center"
-        android:background="#E0E0E0"
-        android:padding="8dp"
-        android:layout_marginBottom="16dp" />
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="16dp">
-        <Button
-            android:id="@+id/btnConnect"
-            android:layout_width="0dp"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/txtTitle"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Connect"
-            android:layout_marginEnd="8dp" />
-        <Button
-            android:id="@+id/btnSettings"
-            android:layout_width="0dp"
+            android:text="VoXNet Communication"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="12dp" />
+
+        <TextView
+            android:id="@+id/txtStatus"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Settings"
-            android:layout_marginStart="8dp" />
+            android:text="Disconnected"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:background="#E0E0E0"
+            android:padding="10dp"
+            android:layout_marginBottom="12dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:layout_marginBottom="12dp">
+
+            <Button
+                android:id="@+id/btnConnect"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="CONNECT"
+                android:layout_marginEnd="6dp" />
+
+            <Button
+                android:id="@+id/btnSettings"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="SETTINGS"
+                android:layout_marginStart="6dp" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnWifiSettings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="OPEN WI-FI SETTINGS"
+            android:layout_marginBottom="12dp" />
+
+        <EditText
+            android:id="@+id/edtNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Phone Number (+91XXXXXXXXXX)"
+            android:inputType="phone"
+            android:layout_marginBottom="8dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:layout_marginBottom="12dp">
+
+            <Button
+                android:id="@+id/btnCall"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="CALL"
+                android:enabled="false"
+                android:layout_marginEnd="6dp" />
+
+            <Button
+                android:id="@+id/btnEnd"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="END"
+                android:enabled="false"
+                android:layout_marginStart="6dp" />
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/edtMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="SMS Message"
+            android:inputType="textMultiLine"
+            android:minLines="2"
+            android:layout_marginBottom="8dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:layout_marginBottom="12dp">
+
+            <Button
+                android:id="@+id/btnSendSms"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="SEND SMS"
+                android:enabled="false"
+                android:layout_marginEnd="6dp" />
+
+            <Button
+                android:id="@+id/btnSos"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="SOS"
+                android:enabled="false"
+                android:background="#FF5722"
+                android:textColor="@android:color/white"
+                android:layout_marginStart="6dp" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnSpeaker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="SPEAKER"
+            android:enabled="false"
+            android:layout_marginBottom="12dp" />
+
+        <Button
+            android:id="@+id/btnMap"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="OPEN MAP"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/btnTimeline"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="SHOW PROCESS DETAILS"
+            android:layout_marginBottom="12dp" />
+
+        <TextView
+            android:id="@+id/txtFooter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/footer_credit"
+            android:textSize="12sp"
+            android:textColor="#777777"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp" />
     </LinearLayout>
-
-    <Button
-        android:id="@+id/btnWifiSettings"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Open Wi-Fi Settings"
-        android:layout_marginBottom="16dp" />
-
-    <EditText
-        android:id="@+id/edtNumber"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Phone Number (+91XXXXXXXXXX)"
-        android:inputType="phone"
-        android:layout_marginBottom="8dp" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="16dp">
-        <Button
-            android:id="@+id/btnCall"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Call"
-            android:enabled="false"
-            android:layout_marginEnd="8dp" />
-        <Button
-            android:id="@+id/btnEnd"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="End"
-            android:enabled="false"
-            android:layout_marginStart="8dp" />
-    </LinearLayout>
-
-    <EditText
-        android:id="@+id/edtMessage"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="SMS Message"
-        android:inputType="textMultiLine"
-        android:minLines="2"
-        android:layout_marginBottom="8dp" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="16dp">
-        <Button
-            android:id="@+id/btnSendSms"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Send SMS"
-            android:enabled="false"
-            android:layout_marginEnd="8dp" />
-        <Button
-            android:id="@+id/btnSos"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="SOS"
-            android:enabled="false"
-            android:background="#FF5722"
-            android:textColor="@android:color/white"
-            android:layout_marginStart="8dp" />
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/btnSpeaker"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Speaker"
-        android:enabled="false" />
-
-    <Button
-        android:id="@+id/btnMap"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Open Map"
-        android:layout_marginTop="12dp" />
-
-    <Button
-        android:id="@+id/btnTimeline"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Show Process Details"
-        android:layout_marginTop="8dp" />
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-
-    <TextView
-        android:id="@+id/txtFooter"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/footer_credit"
-        android:textSize="12sp"
-        android:textColor="#777777"
-        android:layout_marginTop="8dp" />
-</LinearLayout>
+</androidx.core.widget.NestedScrollView>

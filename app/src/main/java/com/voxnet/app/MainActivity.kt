@@ -9,15 +9,15 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.IBinder
 import android.provider.Settings
+import android.view.LayoutInflater
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.voxnet.app.databinding.ActivityMainBinding
-import android.view.LayoutInflater
-import android.widget.LinearLayout
-import android.widget.TextView
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -46,6 +46,7 @@ class MainActivity : AppCompatActivity() {
         setupUI()
         requestPermissions()
     }
+
     override fun onDestroy() {
         super.onDestroy()
         if (serviceBound) { unbindService(serviceConnection); serviceBound = false }
@@ -60,7 +61,16 @@ class MainActivity : AppCompatActivity() {
         binding.btnSos.setOnClickListener { sendSOS() }
         binding.btnSpeaker.setOnClickListener { toggleSpeaker() }
         binding.btnWifiSettings.setOnClickListener { openWifiSettings() }
-        binding.btnMap.setOnClickListener { startActivity(Intent(this, MapActivity::class.java)) }
+
+        // Guard Map opening until connected
+        binding.btnMap.setOnClickListener {
+            if (currentCallState == CallState.DISCONNECTED) {
+                Toast.makeText(this, "Connect to device first", Toast.LENGTH_SHORT).show()
+            } else {
+                startActivity(Intent(this, MapActivity::class.java))
+            }
+        }
+
         binding.btnTimeline.setOnClickListener { showTimelineSheet() }
         updateUI()
     }
@@ -73,12 +83,15 @@ class MainActivity : AppCompatActivity() {
         voiceService?.startVoiceService(settings)
         binding.txtStatus.text = "Connecting..."
     }
+
     private fun makeCall() {
         val number = binding.edtNumber.text.toString().trim()
         if (number.isEmpty()) { Toast.makeText(this, "Please enter a phone number", Toast.LENGTH_SHORT).show(); return }
         voiceService?.makeCall(number)
     }
+
     private fun endCall() { voiceService?.endCall() }
+
     private fun sendSMS() {
         val number = binding.edtNumber.text.toString().trim()
         val message = binding.edtMessage.text.toString().trim()
@@ -88,12 +101,15 @@ class MainActivity : AppCompatActivity() {
         voiceService?.sendSMS(number, message)
         Toast.makeText(this, "Sending SMS...", Toast.LENGTH_SHORT).show()
     }
+
     private fun sendSOS() { voiceService?.sendSOS(); Toast.makeText(this, "SOS signal sent", Toast.LENGTH_SHORT).show() }
+
     private fun toggleSpeaker() {
         useSpeaker = !useSpeaker
         voiceService?.toggleSpeaker(useSpeaker)
         binding.btnSpeaker.text = if (useSpeaker) "Earpiece" else "Speaker"
     }
+
     private fun openSettings() { startActivity(Intent(this, SettingsActivity::class.java)) }
     private fun openWifiSettings() { startActivity(Intent(Settings.ACTION_WIFI_SETTINGS)) }
 
@@ -125,6 +141,7 @@ class MainActivity : AppCompatActivity() {
         binding.btnSendSms.isEnabled = connected && !inCall
         binding.btnSos.isEnabled = connected
         binding.btnSpeaker.isEnabled = connected
+        binding.btnMap.isEnabled = connected // ensure user can open map only after connect
     }
 
     private fun requestPermissions() {
@@ -132,6 +149,7 @@ class MainActivity : AppCompatActivity() {
         val missing = perms.filter { ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED }
         if (missing.isNotEmpty()) ActivityCompat.requestPermissions(this, missing.toTypedArray(), 1)
     }
+
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 1 && !grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {

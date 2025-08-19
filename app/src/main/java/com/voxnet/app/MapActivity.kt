@@ -10,6 +10,7 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
 import android.os.IBinder
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import org.osmdroid.config.Configuration
@@ -27,6 +28,7 @@ import java.io.File
 
 class MapActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var map: MapView
+    private lateinit var overlayStatus: TextView
     private var marker: Marker? = null
     private val path = Polyline()
     private val points = mutableListOf<GeoPoint>()
@@ -34,6 +36,7 @@ class MapActivity : AppCompatActivity(), SensorEventListener {
     private var sensorManager: SensorManager? = null
     private var voiceService: VoiceService? = null
     private var bound = false
+    private var gotFirstFix = false
 
     private val conn = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
@@ -42,6 +45,7 @@ class MapActivity : AppCompatActivity(), SensorEventListener {
             bound = true
             voiceService?.gpsListener = { fix ->
                 runOnUiThread {
+                    overlayStatus.visibility = TextView.GONE
                     val gp = GeoPoint(fix.lat, fix.lon)
                     if (marker == null) {
                         marker = Marker(map).apply {
@@ -50,10 +54,13 @@ class MapActivity : AppCompatActivity(), SensorEventListener {
                             setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
                         }
                         map.overlays.add(marker)
-                        map.controller.setZoom(16.0)
-                        map.controller.setCenter(gp)
                     } else {
                         marker?.position = gp
+                    }
+                    if (!gotFirstFix) {
+                        gotFirstFix = true
+                        map.controller.setZoom(16.0)
+                        map.controller.setCenter(gp)
                     }
                     points.add(gp)
                     path.setPoints(points)
@@ -67,64 +74,50 @@ class MapActivity : AppCompatActivity(), SensorEventListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Configure osmdroid
         Configuration.getInstance().userAgentValue = packageName
+        setContentView(R.layout.activity_map)
 
-        // Create map view
-        map = MapView(this)
-        setContentView(map)
+        map = findViewById(R.id.map)
+        overlayStatus = findViewById(R.id.overlayStatus)
 
-        // Setup tiles (offline MBTiles if present, otherwise cached tiles)
         setupOfflineMap()
 
-        // Path styling
         path.outlinePaint.strokeWidth = 6f
-        path.outlinePaint.color = 0xFF0000FF.toInt() // Blue
+        path.outlinePaint.color = 0xFF0000FF.toInt()
 
-        // Sensors for heading
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
     }
 
     private fun setupOfflineMap() {
         try {
-            // Avoid any network fetches
             map.setUseDataConnection(false)
 
             val mbtilesFile = File("/sdcard/osmdroid/area.mbtiles")
             if (mbtilesFile.exists()) {
-                // 1) Define an offline tile source (adjust min/max zoom to your mbtiles)
                 val offlineSource = XYTileSource(
-                    "mbtiles",   // arbitrary name
-                    0,           // min zoom
-                    19,          // max zoom (adjust if your MBTiles uses different range)
+                    "mbtiles",
+                    0,     // min zoom in your MBTiles
+                    19,    // max zoom (adjust to your MBTiles)
                     256,
-                    ".png",
+                    ".png", // change to ".jpg" if your MBTiles uses JPEG tiles
                     null
                 )
-
-                // 2) Create archive provider bound to that tile source
                 val archive = MBTilesFileArchive.getDatabaseFileArchive(mbtilesFile)
                 val archiveProvider = MapTileFileArchiveProvider(
                     SimpleRegisterReceiver(this),
-                    offlineSource,                 // ITileSource
-                    arrayOf(archive)               // archives to read
+                    offlineSource,
+                    arrayOf(archive)
                 )
-
-                // 3) Build a provider array for the map
                 val providerArray = MapTileProviderArray(
-                    offlineSource,                 // ITileSource
+                    offlineSource,
                     null,
                     arrayOf(archiveProvider)
                 )
-
                 map.setTileProvider(providerArray)
                 map.setTileSource(offlineSource)
-                Toast.makeText(this, "Offline MBTiles loaded", Toast.LENGTH_SHORT).show()
             } else {
-                // Fallback: cached tiles only (no internet)
-                map.setTileSource(TileSourceFactory.MAPNIK)
-                Toast.makeText(this, "Place area.mbtiles in /sdcard/osmdroid/", Toast.LENGTH_LONG).show()
+                map.setTileSource(TileSourceFactory.MAPNIK) // cached-only fallback
+                Toast.makeText(this, "Offline tiles not found. Copy area.mbtiles to /sdcard/osmdroid/", Toast.LENGTH_LONG).show()
             }
         } catch (e: Exception) {
             map.setTileSource(TileSourceFactory.MAPNIK)
@@ -132,9 +125,10 @@ class MapActivity : AppCompatActivity(), SensorEventListener {
         }
 
         map.setMultiTouchControls(true)
-        // Default view (change to your operation area if desired)
-        map.controller.setZoom(10.0)
-        map.controller.setCenter(GeoPoint(28.6139, 77.2090))
+        // Neutral initial view until GPS arrives
+        map.controller.setZoom(3.0)
+        map.controller.setCenter(GeoPoint(0.0, 0.0))
+        overlayStatus.visibility = TextView.VISIBLE
     }
 
     override fun onStart() {
